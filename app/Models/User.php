@@ -8,11 +8,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
+
+    const ROLE_ADMIN = 0;
+    const ROLE_USER = 1;
 
     /**
      * The attributes that are mass assignable.
@@ -61,5 +65,15 @@ class User extends Authenticatable
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function admin()
+    {
+        return $this->role === self::ROLE_ADMIN;
+    }
+
+    public function user()
+    {
+        return $this->role === self::ROLE_USER;
     }
 }
