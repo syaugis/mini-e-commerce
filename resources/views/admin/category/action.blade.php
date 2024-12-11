@@ -1,0 +1,1 @@
+<x-action-buttons :entity="'category'" :id="$id" :editRoute="route('admin.category.edit', $id)" :deleteRoute="route('admin.category.destroy', $id)" :deleteMessage="__('Are you sure you want to delete this category?')" />

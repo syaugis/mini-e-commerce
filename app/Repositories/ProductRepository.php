@@ -52,7 +52,7 @@ class ProductRepository
         $product->price = $data['price'];
         $product->stock = $data['stock'];
         $product->productCategory()->associate($data['category_id']);
-        $product->save();
+        $product->update();
 
         if (isset($data['images'])) {
             foreach ($product->productImages as $oldImage) {

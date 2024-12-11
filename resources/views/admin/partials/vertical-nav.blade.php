@@ -63,7 +63,7 @@
                         </svg>
                     </i>
                     <i class="sidenav-mini-icon"> P </i>
-                    <span class="item-name">Products Data</span>
+                    <span class="item-name">Product Data</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -75,8 +75,8 @@
                             </g>
                         </svg>
                     </i>
-                    <i class="sidenav-mini-icon"> CP </i>
-                    <span class="item-name">Category Product Data</span>
+                    <i class="sidenav-mini-icon"> C</i>
+                    <span class="item-name">Category Data</span>
                 </a>
             </li>
 
