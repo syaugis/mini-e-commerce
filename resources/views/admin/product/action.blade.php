@@ -1,0 +1,1 @@
+<x-action-buttons :entity="'product'" :id="$id" :editRoute="route('admin.product.edit', $id)" :deleteRoute="route('admin.product.destroy', $id)" :deleteMessage="__('Are you sure you want to delete this product?')" />
