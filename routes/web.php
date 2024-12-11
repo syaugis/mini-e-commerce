@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /*------------------------------------------
@@ -28,6 +29,14 @@ All Admin Routes List
 Route::middleware('auth', 'role:ADMIN')->prefix('admin')->group(function () {
     Route::get('dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
 
-    Route::get('product')->name('admin.product.index');
+    Route::controller(ProductController::class)->prefix('product')->group(function () {
+        Route::get('', 'index')->name('admin.product.index');
+        Route::get('add', 'create')->name('admin.product.create');
+        Route::post('add', 'store')->name('admin.product.store');
+        Route::get('edit/{id}', 'edit')->name('admin.product.edit');
+        Route::put('edit/{id}', 'update')->name('admin.product.update');
+        Route::delete('destroy/{id}', 'destroy')->name('admin.product.destroy');
+    });
+
     Route::get('category')->name('admin.category.index');
 });
