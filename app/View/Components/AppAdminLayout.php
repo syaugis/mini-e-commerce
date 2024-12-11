@@ -12,6 +12,8 @@ class AppAdminLayout extends Component
 
     /**
      * Create a new component instance.
+     *
+     * @param array|null $assets
      */
     public function __construct($assets = [],)
     {
@@ -20,8 +22,10 @@ class AppAdminLayout extends Component
 
     /**
      * Get the view / contents that represent the component.
+     *
+     * @return \Illuminate\Contracts\View\View
      */
-    public function render(): View|Closure|string
+    public function render(): View
     {
         return view('admin.layouts.app');
     }

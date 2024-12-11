@@ -8,7 +8,7 @@
         @include('admin.partials.sub-header')
     </div>
 
-    <div class="conatiner-fluid content-inner mt-n5 py-0">
+    <div class="container-fluid content-inner mt-n5 py-0">
         {{ $slot }}
     </div>
 
