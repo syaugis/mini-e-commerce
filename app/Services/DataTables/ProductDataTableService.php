@@ -21,12 +21,15 @@ class ProductDataTableService extends DataTable
     {
         return (new EloquentDataTable($query))
             ->setRowId('id')
-            ->addColumn('category_id', function (Product $product) {
-                return $product->productCategory->name;
+            ->addColumn('price', function ($query) {
+                return $query->formattedPrice;
             })
-            ->addColumn('image', function (Product $product) {
-                if ($product->productImages->isNotEmpty()) {
-                    $url = asset("storage/" . $product->productImages->first()->image_path);
+            ->addColumn('category_id', function ($query) {
+                return $query->productCategory->name;
+            })
+            ->addColumn('image', function ($query) {
+                if ($query->productImages->isNotEmpty()) {
+                    $url = asset("storage/" . $query->productImages->first()->image_path);
                 } else {
                     $url = asset('images/error/no_image.png');
                 }

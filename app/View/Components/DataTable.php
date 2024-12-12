@@ -3,19 +3,21 @@
 namespace App\View\Components;
 
 use Illuminate\View\Component;
+use Illuminate\View\View;
 
 class DataTable extends Component
 {
-    public $pageTitle;
-    public $headerAction;
+    public string $pageTitle;
+    public ?string $headerAction;
     public $dataTable;
 
     /**
      * Create a new component instance.
      *
-     * @return void
+     * @param string        $pageTitle
+     * @param string|null   $headerAction     
      */
-    public function __construct($pageTitle = 'List', $headerAction = null, $dataTable)
+    public function __construct($pageTitle = 'List', $dataTable, $headerAction = null)
     {
         $this->pageTitle = $pageTitle;
         $this->headerAction = $headerAction;
@@ -25,9 +27,9 @@ class DataTable extends Component
     /**
      * Get the view / contents that represent the component.
      *
-     * @return \Illuminate\Contracts\View\View|\Closure|string
+     * @return \Illuminate\Contracts\View\View
      */
-    public function render()
+    public function render(): View
     {
         return view('components.data-table');
     }

@@ -38,4 +38,9 @@ class Product extends Model
     {
         return $this->hasMany(OrderItem::class, 'product_id');
     }
+
+    public function getFormattedPriceAttribute(): string
+    {
+        return 'Rp' . number_format($this->price, 2, ',', '.');
+    }
 }

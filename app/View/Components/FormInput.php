@@ -3,6 +3,7 @@
 namespace App\View\Components;
 
 use Illuminate\View\Component;
+use Illuminate\View\View;
 
 class FormInput extends Component
 {
@@ -13,6 +14,7 @@ class FormInput extends Component
     public string $placeholder;
     public bool $required;
     public string $type;
+    public bool $readonly;
 
     /**
      * Create a new component instance.
@@ -24,6 +26,7 @@ class FormInput extends Component
      * @param string $placeholder
      * @param bool $required
      * @param string $type
+     * @param bool $readonly
      */
     public function __construct(
         string $name,
@@ -32,7 +35,8 @@ class FormInput extends Component
         ?string $value = null,
         string $placeholder = '',
         bool $required = false,
-        string $type = 'text'
+        string $type = 'text',
+        bool $readonly = false,
     ) {
         $this->name = $name;
         $this->id = $id;
@@ -41,14 +45,15 @@ class FormInput extends Component
         $this->placeholder = $placeholder;
         $this->required = $required;
         $this->type = $type;
+        $this->readonly = $readonly;
     }
 
     /**
      * Get the view / contents that represent the component.
      *
-     * @return \Illuminate\Contracts\View\View|string
+     * @return \Illuminate\Contracts\View\View
      */
-    public function render()
+    public function render(): View
     {
         return view('components.form-input');
     }

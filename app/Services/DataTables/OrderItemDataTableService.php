@@ -2,7 +2,7 @@
 
 namespace App\Services\DataTables;
 
-use App\Models\ProductCategory;
+use App\Models\OrderItem;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
@@ -10,8 +10,16 @@ use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 
-class ProductCategoryDataTableService extends DataTable
+class OrderItemDataTableService extends DataTable
 {
+    private $orderId;
+
+    public function withOrderId($orderId)
+    {
+        $this->orderId = $orderId;
+        return $this;
+    }
+
     /**
      * Build the DataTable class.
      *
@@ -21,16 +29,22 @@ class ProductCategoryDataTableService extends DataTable
     {
         return (new EloquentDataTable($query))
             ->setRowId('id')
-            ->addColumn('action', 'admin.category.action')
-            ->rawColumns(['action']);
+            ->addColumn('price', function ($query) {
+                return $query->formatted_price;
+            })
+            ->addColumn('total_price', function ($query) {
+                return $query->total_price;
+            });
     }
 
     /**
      * Get the query source of dataTable.
      */
-    public function query(ProductCategory $model): QueryBuilder
+    public function query(OrderItem $model): QueryBuilder
     {
-        return $model->newQuery();
+        return $model->where('order_id', $this->orderId)->newQuery()
+            ->with(['product:id,name'])
+            ->select('order_items.*');
     }
 
     /**
@@ -39,7 +53,7 @@ class ProductCategoryDataTableService extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-            ->setTableId('product-categories-table')
+            ->setTableId('order-items-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->orderBy(0, 'asc')
@@ -59,14 +73,17 @@ class ProductCategoryDataTableService extends DataTable
     public function getColumns(): array
     {
         return [
-            Column::make('id')->title('ID'),
-            Column::make('name'),
-            Column::computed('action')
-                ->exportable(false)
-                ->printable(false)
-                ->searchable(false)
-                ->width(60)
-                ->addClass('text-center hide-search'),
+            Column::make('id')
+                ->title('ID'),
+            Column::make('product')
+                ->data('product.name')
+                ->title('Product Name'),
+            Column::make('quantity')
+                ->title('Quantity'),
+            Column::make('price')
+                ->title('Price'),
+            Column::make('total_price')
+                ->title('Total Price'),
         ];
     }
 
@@ -75,6 +92,6 @@ class ProductCategoryDataTableService extends DataTable
      */
     protected function filename(): string
     {
-        return 'Categories_' . date('YmdHis');
+        return 'OrderItems_' . date('YmdHis');
     }
 }

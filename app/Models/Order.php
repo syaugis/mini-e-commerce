@@ -12,6 +12,12 @@ class Order extends Model
 {
     use HasFactory;
 
+    const STATUS_PENDING = 0;
+    const STATUS_PAID = 1;
+    const STATUS_SHIPPED = 2;
+    const STATUS_COMPLETED = 3;
+    const STATUS_CANCELED = 4;
+
     protected $fillable = [
         'user_id',
         'shipping_address_id',
@@ -32,5 +38,23 @@ class Order extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public static $statuses = [
+        self::STATUS_PENDING => 'Pending',
+        self::STATUS_PAID => 'Paid',
+        self::STATUS_SHIPPED => 'Shipped',
+        self::STATUS_COMPLETED => 'Completed',
+        self::STATUS_CANCELED => 'Canceled',
+    ];
+
+    public function getStatusLabelAttribute()
+    {
+        return self::$statuses[$this->status] ?? 'Unknown';
+    }
+
+    public function getFormattedTotalPriceAttribute(): string
+    {
+        return 'Rp' . number_format($this->total_price, 2, ',', '.');
     }
 }

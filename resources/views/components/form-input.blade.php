@@ -7,11 +7,11 @@
     @if ($type === 'textarea')
         <textarea name="{{ $name }}" id="{{ $id }}"
             class="form-control{{ $errors->has($name) ? ' is-invalid' : '' }}" placeholder="{{ $placeholder }}"
-            {{ $required ? 'required' : '' }}>{{ old($name, $value) }}</textarea>
+            {{ $required ? 'required' : '' }} {{ $readonly ? 'readonly' : '' }}>{{ old($name, $value) }}</textarea>
     @else
         <input type="{{ $type }}" name="{{ $name }}" id="{{ $id }}"
             value="{{ old($name, $value) }}" class="form-control{{ $errors->has($name) ? ' is-invalid' : '' }}"
-            placeholder="{{ $placeholder }}" {{ $required ? 'required' : '' }} />
+            placeholder="{{ $placeholder }}" {{ $required ? 'required' : '' }} {{ $readonly ? 'readonly' : '' }} />
     @endif
 
     @error($name)

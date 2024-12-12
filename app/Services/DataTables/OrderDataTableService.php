@@ -2,7 +2,7 @@
 
 namespace App\Services\DataTables;
 
-use App\Models\ProductCategory;
+use App\Models\Order;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
@@ -10,7 +10,7 @@ use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 
-class ProductCategoryDataTableService extends DataTable
+class OrderDataTableService extends DataTable
 {
     /**
      * Build the DataTable class.
@@ -21,16 +21,34 @@ class ProductCategoryDataTableService extends DataTable
     {
         return (new EloquentDataTable($query))
             ->setRowId('id')
-            ->addColumn('action', 'admin.category.action')
-            ->rawColumns(['action']);
+            ->addColumn('shipping_address', function ($query) {
+                return $query->shippingAddress->address;
+            })
+            ->addColumn('status', function ($query) {
+                $labels = [
+                    0 => '<span class="badge bg-secondary">Pending</span>',
+                    1 => '<span class="badge bg-primary">Paid</span>',
+                    2 => '<span class="badge bg-info">Shipped</span>',
+                    3 => '<span class="badge bg-success">Completed</span>',
+                    4 => '<span class="badge bg-danger">Canceled</span>',
+                ];
+                return $labels[$query->status] ?? '<span class="badge bg-dark">Unknown</span>';
+            })
+            ->addColumn('total_price', function ($query) {
+                return $query->formatted_total_price;
+            })
+            ->addColumn('action', 'admin.order.action')
+            ->rawColumns(['status', 'action']);
     }
 
     /**
      * Get the query source of dataTable.
      */
-    public function query(ProductCategory $model): QueryBuilder
+    public function query(Order $model): QueryBuilder
     {
-        return $model->newQuery();
+        return $model->newQuery()
+            ->with(['user:id,name', 'shippingAddress:order_id,address'])
+            ->select('orders.*');
     }
 
     /**
@@ -39,7 +57,7 @@ class ProductCategoryDataTableService extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-            ->setTableId('product-categories-table')
+            ->setTableId('orders-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->orderBy(0, 'asc')
@@ -60,7 +78,15 @@ class ProductCategoryDataTableService extends DataTable
     {
         return [
             Column::make('id')->title('ID'),
-            Column::make('name'),
+            Column::make('user')
+                ->data('user.name')
+                ->title('User Name'),
+            Column::make('shipping_address')
+                ->title('Shipping Address'),
+            Column::make('status')
+                ->title('Status'),
+            Column::make('total_price')
+                ->title('Total Price'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
@@ -75,6 +101,6 @@ class ProductCategoryDataTableService extends DataTable
      */
     protected function filename(): string
     {
-        return 'Categories_' . date('YmdHis');
+        return 'Orders_' . date('YmdHis');
     }
 }

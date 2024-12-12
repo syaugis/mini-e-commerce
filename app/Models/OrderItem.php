@@ -26,4 +26,14 @@ class OrderItem extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function getFormattedPriceAttribute(): string
+    {
+        return 'Rp' . number_format($this->price, 2, ',', '.');
+    }
+
+    public function getTotalPriceAttribute(): string
+    {
+        return 'Rp' . number_format($this->quantity * $this->price, 2, ',', '.');
+    }
 }
