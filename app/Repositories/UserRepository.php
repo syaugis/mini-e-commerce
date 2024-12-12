@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Hash;
 
 class UserRepository
@@ -12,6 +13,16 @@ class UserRepository
     public function __construct(User $user)
     {
         $this->user = $user;
+    }
+
+    public function getAll(): Collection
+    {
+        return $this->user->with('shippingAddresses', 'cart', 'orders')->get();
+    }
+
+    public function getById($id): User
+    {
+        return $this->user->with('shippingAddresses', 'cart', 'orders')->findOrFail($id);
     }
 
     public function getByEmail($email): ?User
@@ -37,6 +48,14 @@ class UserRepository
         }
 
         $user->update($data);
+
+        return $user;
+    }
+
+    public function destroy($id): User
+    {
+        $user = $this->user->findOrFail($id);
+        $user->delete();
 
         return $user;
     }

@@ -1,6 +1,9 @@
+@push('scripts')
+    {{ $dataTable->scripts(attributes: ['type' => 'module']) }}
+@endpush
 <x-app-admin-layout :assets="$assets ?? []">
     <div class="row">
-        <x-card :header="'Order Detail'" :action="route('admin.order.index')" :id="$id ?? null" :createdAt="$data->created_at ?? null" :updatedAt="$data->updated_at ?? null">
+        <x-card :header="'Order Detail'" :action="url()->previous()" :id="$id ?? null" :createdAt="$data->created_at ?? null" :updatedAt="$data->updated_at ?? null">
             <div class="row">
                 <x-form-input name="user_name" id="order_user_name" label="Order User Name" :value="$data->user->name ?? ''"
                     :readonly="true" />

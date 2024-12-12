@@ -2,7 +2,7 @@
 
 namespace App\Services\DataTables;
 
-use App\Models\Product;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
 use Yajra\DataTables\Html\Builder as HtmlBuilder;
@@ -10,7 +10,7 @@ use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 
-class ProductDataTableService extends DataTable
+class UserDataTableService extends DataTable
 {
     /**
      * Build the DataTable class.
@@ -21,29 +21,24 @@ class ProductDataTableService extends DataTable
     {
         return (new EloquentDataTable($query))
             ->setRowId('id')
-            ->addColumn('price', function ($query) {
-                return $query->formattedPrice;
+            ->addColumn('main_address', function ($query) {
+                return $query->defaultAddress?->address ?? 'N/A';
             })
-            ->addColumn('image', function ($query) {
-                if ($query->productImages->isNotEmpty()) {
-                    $url = asset("storage/" . $query->productImages->first()->image_path);
-                } else {
-                    $url = asset('images/error/no_image.png');
-                }
-                return '<img src="' . $url . '" class="img-rounded" style="max-height: 120px;" align="center"/>';
+            ->addColumn('order_count', function ($query) {
+                return $query->orders->count();
             })
-            ->addColumn('action', 'admin.product.action')
-            ->rawColumns(['action', 'image']);
+            ->addColumn('action', 'admin.user.action')
+            ->rawColumns(['status', 'action']);
     }
 
     /**
      * Get the query source of dataTable.
      */
-    public function query(Product $model): QueryBuilder
+    public function query(User $model): QueryBuilder
     {
         return $model->newQuery()
-            ->with(['productCategory:id,name', 'productImages:id,product_id,image_path'])
-            ->select('products.*');
+            ->with(['defaultAddress:user_id,address', 'orders:id,user_id,status'])
+            ->select('users.*');
     }
 
     /**
@@ -52,7 +47,7 @@ class ProductDataTableService extends DataTable
     public function html(): HtmlBuilder
     {
         return $this->builder()
-            ->setTableId('products-table')
+            ->setTableId('users-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->orderBy(0, 'asc')
@@ -73,20 +68,18 @@ class ProductDataTableService extends DataTable
     {
         return [
             Column::make('id')->title('ID'),
-            Column::make('image')
-                ->orderable(false)
-                ->searchable(false)
-                ->width(100),
-            Column::make('name'),
-            Column::make('description'),
-            Column::make('price')
-                ->data('price')
-                ->name('products.price'),
-            Column::make('stock'),
-            Column::make('category_id')
-                ->data('product_category.name')
-                ->name('productCategory.name')
-                ->title('Category'),
+            Column::make('name')
+                ->title('User Name'),
+            Column::make('email')
+                ->title('User Email'),
+            Column::make('main_address')
+                ->data('main_address')
+                ->name('defaultAddress.address')
+                ->title('User Address'),
+            Column::make('order_count')
+                ->data('order_count')
+                ->name('order_count')
+                ->title('Order Count'),
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
@@ -101,6 +94,6 @@ class ProductDataTableService extends DataTable
      */
     protected function filename(): string
     {
-        return 'Products_' . date('YmdHis');
+        return 'User_' . date('YmdHis');
     }
 }

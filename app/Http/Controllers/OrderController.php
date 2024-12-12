@@ -22,7 +22,7 @@ class OrderController extends Controller
         $this->orderItemDataTableService = $orderItemDataTableService;
     }
 
-    public function index()
+    public function index(): View|JsonResponse
     {
         try {
             $assets = ['data-table'];
@@ -40,6 +40,6 @@ class OrderController extends Controller
         $pageTitle = 'Order Item List Data';
         $data = $this->orderService->getById($id);
 
-        return $this->orderItemDataTableService->withOrderId($id)->render('admin.order.show', compact('assets', 'pageTitle', 'data'));
+        return $this->orderItemDataTableService->withOrderId($id)->render('admin.order.show', compact('assets', 'pageTitle', 'data', 'id'));
     }
 }

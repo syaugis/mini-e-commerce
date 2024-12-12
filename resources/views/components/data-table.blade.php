@@ -1,7 +1,3 @@
-@push('scripts')
-    {{ $dataTable->scripts(attributes: ['type' => 'module']) }}
-@endpush
-
 <div class="row">
     <div class="col-sm-12">
         <div class="card">

@@ -6,6 +6,7 @@ use App\Models\ProductCategory;
 use App\Services\ProductService;
 use App\Services\DataTables\ProductDataTableService;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -21,7 +22,7 @@ class ProductController extends Controller
         $this->productDataTableService = $productDataTableService;
     }
 
-    public function index()
+    public function index(): View|JsonResponse
     {
         try {
             $assets = ['data-table'];

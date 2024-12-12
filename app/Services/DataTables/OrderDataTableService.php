@@ -12,6 +12,14 @@ use Yajra\DataTables\Services\DataTable;
 
 class OrderDataTableService extends DataTable
 {
+    private $userId;
+
+    public function withUserId($userId)
+    {
+        $this->userId = $userId;
+        return $this;
+    }
+
     /**
      * Build the DataTable class.
      *
@@ -34,6 +42,14 @@ class OrderDataTableService extends DataTable
                 ];
                 return $labels[$query->status] ?? '<span class="badge bg-dark">Unknown</span>';
             })
+            ->filterColumn('status', function ($query, $keyword) {
+                $sql = 'CASE WHEN status = 0 THEN "Pending" 
+                           WHEN status = 1 THEN "Paid"
+                           WHEN status = 2 THEN "Shipped"
+                           WHEN status = 3 THEN "Completed"
+                           WHEN status = 4 THEN "Canceled" END like ?';
+                $query->whereRaw($sql, ["%{$keyword}%"]);
+            })
             ->addColumn('total_price', function ($query) {
                 return $query->formatted_total_price;
             })
@@ -46,9 +62,15 @@ class OrderDataTableService extends DataTable
      */
     public function query(Order $model): QueryBuilder
     {
-        return $model->newQuery()
-            ->with(['user:id,name', 'shippingAddress:order_id,address'])
+        $query = $model->newQuery()
+            ->with(['user:id,name', 'shippingAddress:id,order_id,address'])
             ->select('orders.*');
+
+        if ($this->userId) {
+            $query->where('user_id', $this->userId);
+        }
+
+        return $query;
     }
 
     /**
@@ -59,7 +81,7 @@ class OrderDataTableService extends DataTable
         return $this->builder()
             ->setTableId('orders-table')
             ->columns($this->getColumns())
-            ->minifiedAjax()
+            ->minifiedAjax(!empty($this->userId) ? route('admin.user.orders', $this->userId) : '')
             ->orderBy(0, 'asc')
             ->selectStyleSingle()
             ->buttons([
@@ -76,24 +98,49 @@ class OrderDataTableService extends DataTable
      */
     public function getColumns(): array
     {
-        return [
-            Column::make('id')->title('ID'),
-            Column::make('user')
-                ->data('user.name')
-                ->title('User Name'),
-            Column::make('shipping_address')
-                ->title('Shipping Address'),
-            Column::make('status')
-                ->title('Status'),
-            Column::make('total_price')
-                ->title('Total Price'),
-            Column::computed('action')
-                ->exportable(false)
-                ->printable(false)
-                ->searchable(false)
-                ->width(60)
-                ->addClass('text-center hide-search'),
-        ];
+        if (!empty($this->userId)) {
+            return [
+                Column::make('id')->title('ID'),
+                Column::make('shipping_address')
+                    ->title('Shipping Address'),
+                Column::make('status')
+                    ->title('Status'),
+                Column::make('total_price')
+                    ->data('total_price')
+                    ->name('total_price')
+                    ->title('Total Price'),
+                Column::computed('action')
+                    ->exportable(false)
+                    ->printable(false)
+                    ->searchable(false)
+                    ->width(60)
+                    ->addClass('text-center hide-search'),
+            ];
+        } else {
+            return [
+                Column::make('id')->title('ID'),
+                Column::make('user')
+                    ->data('user.name')
+                    ->name('user.name')
+                    ->title('User Name'),
+                Column::make('shipping_address')
+                    ->data('shipping_address')
+                    ->name('shippingAddress.address')
+                    ->title('Shipping Address'),
+                Column::make('status')
+                    ->title('Status'),
+                Column::make('total_price')
+                    ->data('total_price')
+                    ->name('orders.total_price')
+                    ->title('Total Price'),
+                Column::computed('action')
+                    ->exportable(false)
+                    ->printable(false)
+                    ->searchable(false)
+                    ->width(60)
+                    ->addClass('text-center hide-search'),
+            ];
+        }
     }
 
     /**

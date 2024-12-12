@@ -57,6 +57,11 @@ class User extends Authenticatable
         return $this->hasMany(ShippingAddress::class);
     }
 
+    public function defaultAddress()
+    {
+        return $this->hasOne(ShippingAddress::class)->where('is_default', true);
+    }
+
     public function cart(): HasOne
     {
         return $this->hasOne(Cart::class);
