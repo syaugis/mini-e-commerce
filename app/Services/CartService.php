@@ -7,6 +7,8 @@ use App\Repositories\CartItemRepository;
 use App\Repositories\ProductRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class CartService
@@ -43,15 +45,20 @@ class CartService
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['success' => false, 'message' => $validator->errors()], Response::HTTP_UNPROCESSABLE_ENTITY);
+            throw new \InvalidArgumentException('Validation failed: ' . $validator->errors()->first());
         }
 
+        DB::beginTransaction();
         try {
             $cart = $this->cartRepository->store($data);
-            return response()->json(['success' => true, 'data' => $cart], Response::HTTP_CREATED);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            DB::rollBack();
+            Log::error('Failed to create cart: ' . $e->getMessage());
+            throw new \RuntimeException('Unable to create cart');
         }
+        DB::commit();
+
+        return $cart;
     }
 
     public function checkStockAvailability(int $productId, int $quantity): bool
@@ -60,7 +67,6 @@ class CartService
 
         return $product->stock >= $quantity;
     }
-
 
     public function addItemToCart($cartId, $data)
     {
@@ -85,12 +91,16 @@ class CartService
             return response()->json(['success' => false, 'message' => 'Insufficient stock'], Response::HTTP_BAD_REQUEST);
         }
 
+        DB::beginTransaction();
         try {
             $item = $this->cartItemRepository->addItem($cartId, $data);
-            return response()->json(['success' => true, 'data' => $item], 201);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
+        DB::commit();
+
+        return response()->json(['success' => true, 'data' => $item], 201);
     }
 
     public function removeItemFromCart($cartId, $productId): JsonResponse
@@ -103,12 +113,16 @@ class CartService
             return response()->json(['success' => false, 'message' => 'Product not found in cart'], Response::HTTP_NOT_FOUND);
         }
 
+        DB::beginTransaction();
         try {
             $this->cartItemRepository->removeItem($cartId, $productId);
-            return response()->json(['success' => true, 'message' => 'Item removed successfully'], Response::HTTP_OK);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
+        DB::commit();
+
+        return response()->json(['success' => true, 'message' => 'Item removed successfully'], Response::HTTP_OK);
     }
 
     public function updateItemQuantity($cartId, $productId, $quantity): JsonResponse
@@ -129,12 +143,16 @@ class CartService
             return response()->json(['success' => false, 'message' => 'Insufficient stock'], Response::HTTP_BAD_REQUEST);
         }
 
+        DB::beginTransaction();
         try {
             $item = $this->cartItemRepository->updateQuantity($cartId, $productId, $quantity);
-            return response()->json(['success' => true, 'data' => $item], Response::HTTP_OK);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
+        DB::commit();
+
+        return response()->json(['success' => true, 'data' => $item], Response::HTTP_OK);
     }
 
     public function clearCart($cartId): JsonResponse
@@ -149,11 +167,15 @@ class CartService
             return response()->json(['success' => false, 'message' => 'Cart is already empty'], Response::HTTP_BAD_REQUEST);
         }
 
+        DB::beginTransaction();
         try {
             $this->cartItemRepository->clearCart($cartId);
-            return response()->json(['success' => true, 'message' => 'Cart cleared successfully'], Response::HTTP_OK);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json(['success' => false, 'message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
+        DB::commit();
+
+        return response()->json(['success' => true, 'message' => 'Cart cleared successfully'], Response::HTTP_OK);
     }
 }

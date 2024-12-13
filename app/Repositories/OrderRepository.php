@@ -13,20 +13,25 @@ class OrderRepository
         $this->order = $order;
     }
 
-    public function getAll()
+    public function getAllUserOrder($id)
     {
-        return $this->order->with('user', 'shippingAddress', 'items')->get();
+        return $this->order->with('shippingAddress', 'items')
+            ->where('user_id', '=', $id)
+            ->get();
     }
 
     public function getById($id): ?Order
     {
-        return $this->order->with('user', 'shippingAddress', 'items')->findOrFail($id);
+        return $this->order->with('shippingAddress', 'items')->findOrFail($id);
     }
 
     public function store($data): Order
     {
         $order = new $this->order;
-        $order->status = $data['status'];
+        $order->user_id = $data['user_id'];
+        $order->shipping_address_id  = $data['shipping_address_id'];
+        $order->total_price  = $data['total_price'];
+        $order->status = 0;
         $order->save();
 
         return $order;

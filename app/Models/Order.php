@@ -25,6 +25,11 @@ class Order extends Model
         'total_price',
     ];
 
+    protected $appends = [
+        'status_label',
+        'formatted_total_price'
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

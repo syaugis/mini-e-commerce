@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Services\CartService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Response;
 
 class CartController extends Controller
 {
@@ -17,13 +18,12 @@ class CartController extends Controller
 
     public function getCart(Request $request)
     {
-        $cartId = $request->user()->cart->id;
+        $user = $request->user();
+        if (!$user->cart) {
+            return response()->json(['success' => false, 'message' => 'Cart not found'], Response::HTTP_NOT_FOUND);
+        }
+        $cartId = $user->cart->id;
         return $this->cartService->getCart($cartId);
-    }
-
-    public function createCart(Request $request)
-    {
-        return $this->cartService->createCart($request->all());
     }
 
     public function addItem(Request $request)
@@ -36,19 +36,32 @@ class CartController extends Controller
 
     public function removeItem(Request $request, $productId)
     {
-        $cartId = $request->user()->cart->id;
+        $user = $request->user();
+        if (!$user->cart) {
+            return response()->json(['success' => false, 'message' => 'Cart not found'], Response::HTTP_NOT_FOUND);
+        }
+        $cartId = $user->cart->id;
         return $this->cartService->removeItemFromCart($cartId, $productId);
     }
 
     public function updateItemQuantity(Request $request, $productId)
     {
-        $cartId = $request->user()->cart->id;
+        $user = $request->user();
+        if (!$user->cart) {
+            return response()->json(['success' => false, 'message' => 'Cart not found'], Response::HTTP_NOT_FOUND);
+        }
+        $cartId = $user->cart->id;
+
         return $this->cartService->updateItemQuantity($cartId, $productId, $request->input('quantity'));
     }
 
     public function clearCart(Request $request)
     {
-        $cartId = $request->user()->cart->id;
+        $user = $request->user();
+        if (!$user->cart) {
+            return response()->json(['success' => false, 'message' => 'Cart not found'], Response::HTTP_NOT_FOUND);
+        }
+        $cartId = $user->cart->id;
         return $this->cartService->clearCart($cartId);
     }
 }
