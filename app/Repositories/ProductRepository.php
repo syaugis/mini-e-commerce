@@ -24,6 +24,21 @@ class ProductRepository
         return $this->product->with('productCategory', 'productImages')->findOrFail($id);
     }
 
+    public function getFilteredAndSortedProducts($filters)
+    {
+        $query = $this->product->query();
+
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
+        }
+
+        if (!empty($filters['sort_by_price'])) {
+            $query->orderBy('price', $filters['sort_by_price']);
+        }
+
+        return $query->with('productCategory', 'productImages')->paginate(10);
+    }
+
     public function store($data): Product
     {
         $product = new $this->product;
