@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ShippingAddressController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,12 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'role:USER'])->group(function () {
+    Route::controller(ShippingAddressController::class)->prefix('shipping-addresses')->group(function () {
+        Route::get('', 'index');
+        Route::post('', 'store');
+        Route::put('{id}', 'update');
+    });
+
     Route::get('products', [ProductController::class, 'index']);
 
     Route::controller(CartController::class)->prefix('cart')->group(function () {
