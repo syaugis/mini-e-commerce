@@ -7,6 +7,8 @@ use App\Services\DataTables\OrderDataTableService;
 use App\Services\DataTables\OrderItemDataTableService;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class OrderController extends Controller
@@ -41,5 +43,23 @@ class OrderController extends Controller
         $data = $this->orderService->getById($id);
 
         return $this->orderItemDataTableService->withOrderId($id)->render('admin.order.show', compact('assets', 'pageTitle', 'data', 'id'));
+    }
+
+    public function update(Request $request, $id): RedirectResponse
+    {
+        $data = $request->only([
+            'status',
+        ]);
+
+        $response = $this->orderService->update($data, $id);
+
+        if (isset($response['error'])) {
+            return back()->withErrors($response['error'])->withInput();
+        }
+
+        $redirectRoute = $request->input('redirect') ?? route('admin.order.index');
+
+        return redirect($redirectRoute)
+            ->withSuccess(__('global-message.update_form', ['form' => 'Order data']));
     }
 }

@@ -68,7 +68,9 @@
                                     </div>
                                     <div class="progress-detail">
                                         <p class="mb-2">Total Revenues</p>
-                                        <h4 class="counter">{{ $data['total_revenues'] }}</h4>
+                                        <h4 class="counter">
+                                            Rp{{ number_format($data['total_revenues'], 2, ',', '.') }}
+                                        </h4>
                                     </div>
                                 </div>
                             </div>

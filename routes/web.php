@@ -51,6 +51,7 @@ Route::middleware('auth', 'role:ADMIN')->prefix('admin')->group(function () {
     Route::controller(OrderController::class)->prefix('order')->group(function () {
         Route::get('', 'index')->name('admin.order.index');
         Route::get('show/{id}', 'show')->name('admin.order.show');
+        Route::put('edit/{id}', 'update')->name('admin.order.update');
     });
 
     Route::controller(UserController::class)->prefix('user')->group(function () {

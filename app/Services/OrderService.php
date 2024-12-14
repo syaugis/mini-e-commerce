@@ -109,7 +109,7 @@ class OrderService
 
         DB::beginTransaction();
         try {
-            $product = $this->orderRepository->store($data);
+            $order = $this->orderRepository->store($data);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
@@ -118,13 +118,13 @@ class OrderService
         }
         DB::commit();
 
-        return $product;
+        return $order;
     }
 
     public function update($data, $id)
     {
         $validator = Validator::make($data, [
-            'status' => 'required|int',
+            'status' => 'required|in:0,1,2,3,4',
         ]);
 
         if ($validator->fails()) {
@@ -133,7 +133,7 @@ class OrderService
 
         DB::beginTransaction();
         try {
-            $product = $this->orderRepository->update($data, $id);
+            $order = $this->orderRepository->update($data, $id);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
@@ -142,14 +142,14 @@ class OrderService
         }
         DB::commit();
 
-        return $product;
+        return $order;
     }
 
     public function destroy($id)
     {
         DB::beginTransaction();
         try {
-            $product = $this->orderRepository->destroy($id);
+            $order = $this->orderRepository->destroy($id);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
@@ -158,6 +158,6 @@ class OrderService
         }
         DB::commit();
 
-        return $product;
+        return $order;
     }
 }

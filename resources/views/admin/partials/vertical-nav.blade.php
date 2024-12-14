@@ -54,7 +54,7 @@
 
         <ul class="sub-nav collapse" id="sidebar-products" data-bs-parent="#sidebar">
             <li class="nav-item">
-                <a class="nav-link @activeRoute('admin.product.index')" href="{{ route('admin.product.index') }}">
+                <a class="nav-link @activeRoute('admin.product*')" href="{{ route('admin.product.index') }}">
                     <i class="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="10" viewBox="0 0 24 24" fill="currentColor">
                             <g>
@@ -67,7 +67,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link @activeRoute('admin.category.index')" href="{{ route('admin.category.index') }}">
+                <a class="nav-link @activeRoute('admin.category*')" href="{{ route('admin.category.index') }}">
                     <i class="icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="10" viewBox="0 0 24 24" fill="currentColor">
                             <g>
@@ -90,7 +90,7 @@
     </li>
 
     <li class="nav-item">
-        <a class="nav-link @activeRoute('admin.order.index')" href="{{ route('admin.order.index') }}">
+        <a class="nav-link @activeRoute('admin.order*')" href="{{ route('admin.order.index') }}">
             <i class="icon">
                 <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" clip-rule="evenodd"
@@ -103,7 +103,7 @@
     </li>
 
     <li class="nav-item">
-        <a class="nav-link @activeRoute('admin.user.index')" href="{{ route('admin.user.index') }}">
+        <a class="nav-link @activeRoute('admin.user*')" href="{{ route('admin.user.index') }}">
             <i class="icon">
                 <svg width="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd" clip-rule="evenodd"
