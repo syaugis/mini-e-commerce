@@ -95,10 +95,10 @@
                                             <button type="submit" class="btn btn-primary">{{ __('Login') }}</button>
                                         </div>
 
-                                        {{-- <p class="mt-3 text-center">
+                                        <p class="mt-3 text-center">
                                             Doesn't have account? <a href="{{ route('register') }}"
                                                 class="text-underline">Click here to register.</a>
-                                        </p> --}}
+                                        </p>
                                     </form>
                                 </div>
                             </div>

@@ -36,6 +36,7 @@ class UserRepository
         $user->name = $data['name'];
         $user->email = $data['email'];
         $user->password = Hash::make($data['password']);
+        $user->role = $data['role'];
         $user->save();
 
         return $user;

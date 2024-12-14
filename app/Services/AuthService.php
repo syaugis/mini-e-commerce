@@ -29,6 +29,8 @@ class AuthService
             'password' => 'required|string|min:8|confirmed',
         ]);
 
+        $data['role'] = 1;
+
         if ($validator->fails()) {
             if ($isWeb) {
                 return redirect()->back()->withErrors($validator->errors())->withInput();
@@ -38,6 +40,10 @@ class AuthService
                 'message' => 'Validation failed',
                 'errors' => $validator->errors(),
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if ($isWeb) {
+            $data['role'] = 0;
         }
 
         DB::beginTransaction();
@@ -55,7 +61,6 @@ class AuthService
             Auth::login($user);
             return redirect()->route('admin.dashboard')->with('success', 'Registration successful');
         }
-
 
         return response()->json([
             'message' => 'Registration successful',
