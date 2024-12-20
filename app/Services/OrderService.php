@@ -13,7 +13,6 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use InvalidArgumentException;
 
 class OrderService
 {
@@ -71,8 +70,10 @@ class OrderService
             foreach ($cartItems as $item) {
                 $order->items()->create([
                     'product_id' => $item->product_id,
+                    'product_name' => $item->product->name,
+                    'product_price' => $item->product->price,
                     'quantity' => $item->quantity,
-                    'price' => $item->product->price,
+                    'total_price' => $item->product->price * $item->quantity,
                 ]);
             }
 
@@ -100,7 +101,7 @@ class OrderService
     public function store($data)
     {
         $validator = Validator::make($data, [
-            'status' => 'required|int',
+            'status' => 'required|integer|in:0,1,2,3,4',
         ]);
 
         if ($validator->fails()) {
@@ -114,7 +115,7 @@ class OrderService
             DB::rollBack();
             Log::info($e->getMessage());
 
-            throw new InvalidArgumentException('Unable to create data');
+            return ['error' => 'Unable to create data'];
         }
         DB::commit();
 
@@ -124,11 +125,17 @@ class OrderService
     public function update($data, $id)
     {
         $validator = Validator::make($data, [
-            'status' => 'required|in:0,1,2,3,4',
+            'status' => 'required|integer|in:0,1,2,3,4',
         ]);
 
         if ($validator->fails()) {
             return ['error' => $validator->errors()];
+        }
+
+        $order = $this->orderRepository->getById($id);
+
+        if ($data['status'] < $order->status) {
+            return ['error' => 'You cannot revert the status to a previous stage'];
         }
 
         DB::beginTransaction();
@@ -138,7 +145,7 @@ class OrderService
             DB::rollBack();
             Log::info($e->getMessage());
 
-            throw new InvalidArgumentException('Unable to update data');
+            return ['error' => 'Unable to update data'];
         }
         DB::commit();
 
@@ -154,7 +161,7 @@ class OrderService
             DB::rollBack();
             Log::info($e->getMessage());
 
-            throw new InvalidArgumentException('Unable to delete data');
+            return ['error' => 'Unable to delete data'];
         }
         DB::commit();
 

@@ -70,14 +70,19 @@ class ProductRepository
         $product->update();
 
         if (isset($data['images'])) {
-            foreach ($product->productImages as $oldImage) {
-                Storage::disk('public')->delete($oldImage->image_path);
-                $oldImage->delete();
-            }
-
             foreach ($data['images'] as $image) {
                 $path = $image->store('img_product', 'public');
                 $product->productImages()->create(['image_path' => $path]);
+            }
+        }
+
+        if (isset($data['delete_images'])) {
+            foreach ($data['delete_images'] as $imageId) {
+                $image = $product->productImages()->find($imageId);
+                if ($image) {
+                    Storage::disk('public')->delete($image->image_path);
+                    $image->delete();
+                }
             }
         }
 

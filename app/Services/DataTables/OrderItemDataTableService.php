@@ -76,11 +76,11 @@ class OrderItemDataTableService extends DataTable
             Column::make('id')
                 ->title('ID'),
             Column::make('product')
-                ->data('product.name')
+                ->data('product_name')
                 ->title('Product Name'),
             Column::make('quantity')
                 ->title('Quantity'),
-            Column::make('price')
+            Column::make('product_price')
                 ->title('Price'),
             Column::make('total_price')
                 ->title('Total Price'),

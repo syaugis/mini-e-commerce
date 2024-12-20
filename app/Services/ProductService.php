@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\ProductCollection;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
 use Exception;
@@ -10,7 +11,6 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use InvalidArgumentException;
 
 class ProductService
 {
@@ -48,7 +48,10 @@ class ProductService
                 return response()->json(['success' => false, 'message' => 'No products found for the given filters.'], Response::HTTP_NOT_FOUND);
             }
 
-            return response()->json(['success' => true, 'data' => $products], Response::HTTP_OK);
+            return response()->json([
+                'success' => true,
+                'data' => new ProductCollection($products),
+            ], Response::HTTP_OK);
         } catch (\Exception $e) {
             Log::error('Error fetching products: ' . $e->getMessage());
 
@@ -61,9 +64,9 @@ class ProductService
         $validator = Validator::make($data, [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'category_id' => 'required|integer|exists:product_categories,id',
+            'price' => 'required|numeric|min:0|max:99999999.99',
+            'stock' => 'required|integer|min:0|max:99999999',
+            'category_id' => 'nullable|integer|exists:product_categories,id',
             'images' => 'nullable|array',
             'images.*' => 'file|image|mimes:jpeg,png,jpg|max:2048',
         ]);
@@ -79,7 +82,7 @@ class ProductService
             DB::rollBack();
             Log::info($e->getMessage());
 
-            throw new InvalidArgumentException('Unable to create data');
+            return ['error' => 'Unable to create data'];
         }
         DB::commit();
 
@@ -91,11 +94,13 @@ class ProductService
         $validator = Validator::make($data, [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:1000',
-            'price' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'category_id' => 'required|integer|exists:product_categories,id',
+            'price' => 'required|numeric|min:0|max:99999999.99',
+            'stock' => 'required|integer|min:0|max:99999999',
+            'category_id' => 'nullable|integer|exists:product_categories,id',
             'images' => 'nullable|array',
             'images.*' => 'file|image|max:2048',
+            'delete_images' => 'nullable|array',
+            'delete_images.*' => 'integer|exists:product_images,id',
         ]);
 
         if ($validator->fails()) {
@@ -109,7 +114,7 @@ class ProductService
             DB::rollBack();
             Log::info($e->getMessage());
 
-            throw new InvalidArgumentException('Unable to update data');
+            return ['error' => 'Unable to update data'];
         }
         DB::commit();
 
@@ -125,7 +130,7 @@ class ProductService
             DB::rollBack();
             Log::info($e->getMessage());
 
-            throw new InvalidArgumentException('Unable to delete data');
+            return ['error' => 'Unable to delete data'];
         }
         DB::commit();
 

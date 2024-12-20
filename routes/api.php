@@ -21,10 +21,14 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
 
 Route::middleware(['auth:sanctum', 'role:USER'])->group(function () {
     Route::controller(ShippingAddressController::class)->prefix('shipping-addresses')->group(function () {
-        Route::get('', 'index');
+        //    index
+        Route::get('', 'index'); //show
         Route::post('', 'store');
         Route::put('{id}', 'update');
+        // Route::delete('{id}', 'destroy');
     });
+
+    // Route::apiResource('user', UserController::class);
 
     Route::get('products', [ProductController::class, 'index']);
 

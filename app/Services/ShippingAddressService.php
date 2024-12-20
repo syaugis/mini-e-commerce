@@ -49,6 +49,7 @@ class ShippingAddressService
             if ($data['is_default'] == 1) {
                 $this->shippingAddressRepository->setToDefault($data['user_id']);
             }
+
             $shippingAddress = $this->shippingAddressRepository->store($data);
 
             return response()->json(['success' => true, 'data' => $shippingAddress], Response::HTTP_CREATED);
@@ -87,6 +88,7 @@ class ShippingAddressService
             }
 
             $shippingAddress = $this->shippingAddressRepository->update($data, $id);
+
             return response()->json(['success' => true, 'data' => $shippingAddress], Response::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => 'Update failed: ' . $e->getMessage()], Response::HTTP_BAD_REQUEST);

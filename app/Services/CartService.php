@@ -32,6 +32,7 @@ class CartService
 
         try {
             $cart = $this->cartRepository->getById($id);
+
             return response()->json(['success' => true, 'data' => $cart], Response::HTTP_OK);
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()], Response::HTTP_NOT_FOUND);
@@ -54,6 +55,7 @@ class CartService
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to create cart: ' . $e->getMessage());
+
             throw new \RuntimeException('Unable to create cart');
         }
         DB::commit();
@@ -96,6 +98,7 @@ class CartService
             $item = $this->cartItemRepository->addItem($cartId, $data);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json(['success' => false, 'message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
         DB::commit();
@@ -118,6 +121,7 @@ class CartService
             $this->cartItemRepository->removeItem($cartId, $productId);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json(['success' => false, 'message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
         DB::commit();
@@ -148,6 +152,7 @@ class CartService
             $item = $this->cartItemRepository->updateQuantity($cartId, $productId, $quantity);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json(['success' => false, 'message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
         DB::commit();
@@ -172,6 +177,7 @@ class CartService
             $this->cartItemRepository->clearCart($cartId);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json(['success' => false, 'message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
         DB::commit();

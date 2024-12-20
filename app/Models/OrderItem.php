@@ -13,15 +13,15 @@ class OrderItem extends Model
     protected $fillable = [
         'order_id',
         'product_id',
+        'product_name',
+        'product_price',
         'quantity',
-        'price',
     ];
 
     protected $casts = [
         'product_id' => 'integer',
 
     ];
-
 
     public function order(): BelongsTo
     {
@@ -35,11 +35,11 @@ class OrderItem extends Model
 
     public function getFormattedPriceAttribute(): string
     {
-        return 'Rp' . number_format($this->price, 2, ',', '.');
+        return 'Rp' . number_format($this->product_price, 2, ',', '.');
     }
 
     public function getTotalPriceAttribute(): string
     {
-        return 'Rp' . number_format($this->quantity * $this->price, 2, ',', '.');
+        return 'Rp' . number_format($this->quantity * $this->product_price, 2, ',', '.');
     }
 }

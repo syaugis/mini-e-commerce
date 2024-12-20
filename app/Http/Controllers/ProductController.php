@@ -38,6 +38,7 @@ class ProductController extends Controller
     public function create(): View
     {
         $product_categories = ProductCategory::pluck('name', 'id');
+
         return view('admin.product.form', compact('product_categories'));
     }
 
@@ -65,6 +66,7 @@ class ProductController extends Controller
     {
         $product_categories = ProductCategory::pluck('name', 'id');
         $data = $this->productService->getById($id);
+
         return view('admin.product.form', compact('data', 'id', 'product_categories'));
     }
 
@@ -76,9 +78,9 @@ class ProductController extends Controller
             'price',
             'stock',
             'category_id',
-            'images',
         ]);
         $data['images'] = $request->file('images');
+        $data['delete_images'] = $request->input('delete_images', []);
 
         $response = $this->productService->update($data, $id);
 

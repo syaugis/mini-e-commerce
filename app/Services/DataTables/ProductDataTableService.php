@@ -32,8 +32,16 @@ class ProductDataTableService extends DataTable
                 }
                 return '<img src="' . $url . '" class="img-rounded" style="max-height: 120px;" align="center"/>';
             })
+            ->addColumn('description', function ($query) {
+                $description = e($query->description);
+                $maxLength = 40;
+                if (strlen($description) > $maxLength) {
+                    $description = substr($description, 0, $maxLength) . '...';
+                }
+                return '<divs">' . nl2br($description) . '</div>';
+            })
             ->addColumn('action', 'admin.product.action')
-            ->rawColumns(['action', 'image']);
+            ->rawColumns(['action', 'image', 'description']);
     }
 
     /**
@@ -78,7 +86,9 @@ class ProductDataTableService extends DataTable
                 ->searchable(false)
                 ->width(100),
             Column::make('name'),
-            Column::make('description'),
+            Column::make('description')
+                ->orderable(false)
+                ->searchable(false),
             Column::make('price')
                 ->data('price')
                 ->name('products.price'),

@@ -67,9 +67,9 @@
                                         </svg>
                                     </div>
                                     <div class="progress-detail">
-                                        <p class="mb-2">Total Revenues</p>
+                                        <p class="mb-2">Total Users</p>
                                         <h4 class="counter">
-                                            Rp{{ number_format($data['total_revenues'], 2, ',', '.') }}
+                                            {{ $data['total_users'] }}
                                         </h4>
                                     </div>
                                 </div>
@@ -85,11 +85,11 @@
         <div class="col-md-12 col-lg-8">
             <div class="row">
                 <div class="col-md-12">
-                    {{-- <div class="card" data-aos="fade-up" data-aos-delay="800">
+                    <div class="card" data-aos="fade-up" data-aos-delay="800">
                         <div class="card-header d-flex justify-content-between flex-wrap">
                             <div class="header-title">
-                                <h4 class="card-title">23</h4>
-                                <p class="mb-0">Total Loans</p>
+                                <h4 class="card-title">2</h4>
+                                <p class="mb-0">Total Order</p>
                             </div>
                             <div class="d-flex align-items-center align-self-center">
                                 <div class="d-flex align-items-center text-primary">
@@ -101,7 +101,7 @@
                                         </g>
                                     </svg>
                                     <div class="ms-2">
-                                        <span class="text-gray">Member</span>
+                                        <span class="text-gray">User</span>
                                     </div>
                                 </div>
                                 <div class="d-flex align-items-center ms-3 text-info">
@@ -113,7 +113,7 @@
                                         </g>
                                     </svg>
                                     <div class="ms-2">
-                                        <span class="text-gray">Loan</span>
+                                        <span class="text-gray">Order</span>
                                     </div>
                                 </div>
                             </div>
@@ -132,7 +132,7 @@
                         <div class="card-body">
                             <div id="d-main" class="d-main"></div>
                         </div>
-                    </div> --}}
+                    </div>
                 </div>
             </div>
         </div>
@@ -140,15 +140,26 @@
         {{-- Right --}}
         <div class="col-md-12 col-lg-4">
             <div class="row">
-                <div class="col-md-6 col-lg-12">
 
+                <div class="col-md-6 col-lg-12">
                     <div class="card" data-aos="fade-up" data-aos-delay="1000">
                         <div class="card-body d-flex justify-content-around text-center">
                             <div>
+                                <h2 class="mb-2"> Rp{{ number_format($data['total_revenues'], 2, ',', '.') }} </h2>
+                                <p class="mb-0 text-gray">Total Revenues</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-12">
+                    <div class="card" data-aos="fade-up" data-aos-delay="1100">
+                        <div class="card-body d-flex justify-content-around text-center">
+                            {{-- <div>
                                 <h2 class="mb-2"> {{ $data['total_users'] }} </h2>
                                 <p class="mb-0 text-gray">Total Users</p>
                             </div>
-                            <hr class="hr-vertial">
+                            <hr class="hr-vertial"> --}}
                             <div>
                                 <h2 class="mb-2">{{ $data['new_users'] }}</h2>
                                 <p class="mb-0 text-gray">New Users</p>

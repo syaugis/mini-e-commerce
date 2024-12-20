@@ -1,6 +1,3 @@
-<!-- resources/views/components/select.blade.php -->
-@props(['name', 'label', 'options', 'selected', 'required' => false])
-
 <div class="form-group">
     <label for="{{ $name }}" class="form-label">{{ $label }} @if ($required)
             <span class="text-danger">*</span>

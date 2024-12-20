@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use InvalidArgumentException;
 
 class OrderItemService
 {
@@ -33,7 +32,11 @@ class OrderItemService
     public function store($data)
     {
         $validator = Validator::make($data, [
-            'quantity' => 'required|int',
+            'order_id' => 'required|exists:orders,id',
+            'product_id' => 'required|exists:products,id',
+            'product_name' => 'required|string',
+            'product_price' => 'required|numeric|min:0|max:99999999.99',
+            'quantity' => 'required|integer|min:1',
         ]);
 
         if ($validator->fails()) {
@@ -42,22 +45,26 @@ class OrderItemService
 
         DB::beginTransaction();
         try {
-            $product = $this->orderItemRepository->store($data);
+            $orderItem = $this->orderItemRepository->store($data);
         } catch (Exception $e) {
             DB::rollBack();
-            Log::info($e->getMessage());
+            Log::error($e->getMessage());
 
-            throw new InvalidArgumentException('Unable to create data');
+            return ['error' => 'Unable to create order item'];
         }
         DB::commit();
 
-        return $product;
+        return $orderItem;
     }
 
     public function update($data, $id)
     {
         $validator = Validator::make($data, [
-            'quantity' => 'required|int',
+            'order_id' => 'required|exists:orders,id',
+            'product_id' => 'required|exists:products,id',
+            'product_name' => 'required|string',
+            'product_price' => 'required|numeric|min:0|max:99999999.99',
+            'quantity' => 'required|integer|min:1',
         ]);
 
         if ($validator->fails()) {
@@ -66,16 +73,16 @@ class OrderItemService
 
         DB::beginTransaction();
         try {
-            $product = $this->orderItemRepository->update($data, $id);
+            $orderItem = $this->orderItemRepository->update($data, $id);
         } catch (Exception $e) {
             DB::rollBack();
-            Log::info($e->getMessage());
+            Log::error($e->getMessage());
 
-            throw new InvalidArgumentException('Unable to update data');
+            return ['error' => 'Unable to update order item'];
         }
         DB::commit();
 
-        return $product;
+        return $orderItem;
     }
 
     public function destroy($id)
@@ -87,7 +94,7 @@ class OrderItemService
             DB::rollBack();
             Log::info($e->getMessage());
 
-            throw new InvalidArgumentException('Unable to delete data');
+            return ['error' => 'Unable to delete data'];
         }
         DB::commit();
 

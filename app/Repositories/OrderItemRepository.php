@@ -26,7 +26,12 @@ class OrderItemRepository
     public function store($data): OrderItem
     {
         $orderItem = new $this->orderItem;
+        $orderItem->order_id = $data['order_id'];
+        $orderItem->product_id = $data['product_id'];
+        $orderItem->product_name = $data['product_name'];
+        $orderItem->product_price = $data['product_price'];
         $orderItem->quantity = $data['quantity'];
+        $orderItem->total_price = $data['product_price'] * $data['quantity'];
         $orderItem->save();
 
         return $orderItem;
@@ -36,6 +41,7 @@ class OrderItemRepository
     {
         $orderItem = $this->orderItem->findOrFail($id);
         $orderItem->quantity = $data['quantity'];
+        $orderItem->total_price = $data['product_price'] * $data['quantity'];
         $orderItem->save();
 
         return $orderItem;
