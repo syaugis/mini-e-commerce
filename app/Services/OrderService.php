@@ -6,6 +6,7 @@ use App\Models\Order;
 use App\Repositories\CartRepository;
 use App\Repositories\OrderRepository;
 use App\Repositories\UserRepository;
+use App\Services\MidtransService;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
@@ -17,12 +18,14 @@ use Illuminate\Support\Facades\Validator;
 class OrderService
 {
     protected $orderRepository;
+    protected $midtransService;
     protected $cartRepository;
     protected $userRepository;
 
-    public function __construct(OrderRepository $orderRepository, CartRepository $cartRepository, UserRepository $userRepository)
+    public function __construct(OrderRepository $orderRepository,  MidtransService $midtransService, CartRepository $cartRepository, UserRepository $userRepository)
     {
         $this->orderRepository = $orderRepository;
+        $this->midtransService = $midtransService;
         $this->cartRepository = $cartRepository;
         $this->userRepository = $userRepository;
     }
@@ -57,12 +60,12 @@ class OrderService
                 return response()->json(['success' => false, 'message' => 'Default Shipping address not found'], Response::HTTP_BAD_REQUEST);
             }
 
-            $totalPrice = $cartItems->sum(function ($item) {
-                return $item->product->price * $item->quantity;
-            });
+            $totalPrice = $cartItems->sum(fn($item) => $item->product->price * $item->quantity);
+            $orderId = 'ORD-' . time() . '-' .  strtoupper(uniqid());
 
             $order = $this->orderRepository->store([
                 'user_id' => $cart->user->id,
+                'order_id' => $orderId,
                 'shipping_address_id' => $cart->user->defaultAddress->id,
                 'total_price' => $totalPrice,
             ]);
@@ -85,6 +88,9 @@ class OrderService
                 'phone' => $shippingAddress->phone,
             ]);
 
+            $snapToken = app(MidtransService::class)->createSnapToken($order);
+            $order->payments()->create(['snap_token' => $snapToken]);
+
             $cart->items()->delete();
             $this->cartRepository->destroy($cartId);
         } catch (Exception $e) {
@@ -95,8 +101,9 @@ class OrderService
         }
         DB::commit();
 
-        return response()->json(['success' => true, 'data' => $order], Response::HTTP_CREATED);
+        return response()->json(['success' => true, 'data' => $order, 'payment' => 'https://app.sandbox.midtrans.com/snap/v2/vtweb/' . $snapToken], Response::HTTP_CREATED);
     }
+
 
     public function store($data)
     {

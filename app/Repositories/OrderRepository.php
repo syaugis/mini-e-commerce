@@ -29,6 +29,7 @@ class OrderRepository
     {
         $order = new $this->order;
         $order->user_id = $data['user_id'];
+        $order->order_id = $data['order_id'];
         $order->shipping_address_id  = $data['shipping_address_id'];
         $order->total_price  = $data['total_price'];
         $order->status = 0;

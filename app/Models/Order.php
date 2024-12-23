@@ -20,6 +20,7 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
+        'order_id',
         'shipping_address_id',
         'status',
         'total_price',
@@ -43,6 +44,11 @@ class Order extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
     }
 
     public static $statuses = [

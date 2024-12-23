@@ -15,6 +15,7 @@ class OrderSeeder extends Seeder
     {
         Order::create([
             'user_id' => 2,
+            'order_id' => "ORD-1734786069-6766BC154493E",
             'shipping_address_id' => 1,
             'status' => 3,
             'total_price' => 224000,
@@ -22,6 +23,7 @@ class OrderSeeder extends Seeder
         ]);
         Order::create([
             'user_id' => 3,
+            'order_id' => "ORD-1831234569-6766BC154493F",
             'shipping_address_id' => 2,
             'status' => 3,
             'total_price' => 2200000,
