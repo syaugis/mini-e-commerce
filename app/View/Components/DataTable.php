@@ -8,26 +8,27 @@ use Illuminate\View\View;
 class DataTable extends Component
 {
     public string $pageTitle;
-    public ?string $headerAction;
+    public array|string|null $headerAction;
     public $dataTable;
 
     /**
      * Create a new component instance.
      *
-     * @param string        $pageTitle
-     * @param string|null   $headerAction     
+     * @param string $pageTitle
+     * @param mixed $headerAction
+     * @param mixed $dataTable
      */
-    public function __construct($pageTitle = 'List', $dataTable, $headerAction = null)
+    public function __construct(string $pageTitle = 'List', $dataTable, $headerAction = null)
     {
         $this->pageTitle = $pageTitle;
-        $this->headerAction = $headerAction;
+        $this->headerAction = is_array($headerAction) ? $headerAction : [$headerAction];
         $this->dataTable = $dataTable;
     }
 
     /**
      * Get the view / contents that represent the component.
      *
-     * @return \Illuminate\Contracts\View\View
+     * @return View
      */
     public function render(): View
     {

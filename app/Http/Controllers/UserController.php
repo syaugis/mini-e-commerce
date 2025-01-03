@@ -6,35 +6,47 @@ use App\Services\UserService;
 use App\Services\DataTables\UserDataTableService;
 use App\Services\DataTables\OrderDataTableService;
 use App\Services\DataTables\ShippingAddressDataTableService;
+use App\Services\Exports\UsersExportService;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class UserController extends Controller
 {
     protected $userService;
     protected $userDataTableService;
+    protected $usersExportService;
     protected $orderDataTableService;
     protected $shippingAddressDataTableService;
 
-    public function __construct(UserService $userService, UserDataTableService $userDataTableService, OrderDataTableService $orderDataTableService, ShippingAddressDataTableService $shippingAddressDataTableService)
+    public function __construct(UserService $userService, UserDataTableService $userDataTableService, UsersExportService $usersExportService, OrderDataTableService $orderDataTableService, ShippingAddressDataTableService $shippingAddressDataTableService)
     {
         $this->userService = $userService;
         $this->userDataTableService = $userDataTableService;
+        $this->usersExportService = $usersExportService;
         $this->orderDataTableService = $orderDataTableService;
         $this->shippingAddressDataTableService = $shippingAddressDataTableService;
     }
 
-    public function index(): View|JsonResponse
+    public function index(): View|JsonResponse|RedirectResponse
     {
         try {
             $assets = ['data-table'];
             $pageTitle = 'User Data';
-            return $this->userDataTableService->render('admin.user.index', compact('assets', 'pageTitle'));
+            $headerAction = [
+                '<a href="' . route('admin.user.export') . '" class="btn btn-sm btn-success" role="button">Export User</a>',
+            ];
+            return $this->userDataTableService->render('admin.user.index', compact('assets', 'pageTitle', 'headerAction'));
         } catch (Exception $e) {
             $error = $e->getMessage();
             return back()->withErrors($error);
         }
+    }
+
+    public function export()
+    {
+        return $this->usersExportService->download('users_' . now() . '.xlsx');
     }
 
     public function show($id): View|JsonResponse

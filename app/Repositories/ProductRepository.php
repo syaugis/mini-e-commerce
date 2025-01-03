@@ -16,7 +16,12 @@ class ProductRepository
 
     public function getAll()
     {
-        return $this->product->with('productCategory', 'productImages')->get();
+        return $this->product->with('productCategory', 'productImages')->all();
+    }
+
+    public function getQueryAll()
+    {
+        return $this->product->query();
     }
 
     public function getById($id): ?Product

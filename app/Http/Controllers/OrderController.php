@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Services\OrderService;
 use App\Services\DataTables\OrderDataTableService;
 use App\Services\DataTables\OrderItemDataTableService;
+use App\Services\Exports\OrdersExportService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -16,24 +17,34 @@ class OrderController extends Controller
     protected $orderService;
     protected $orderDataTableService;
     protected $orderItemDataTableService;
+    protected $ordersExportService;
 
-    public function __construct(OrderService $orderService, OrderDataTableService $orderDataTableService, OrderItemDataTableService $orderItemDataTableService)
+    public function __construct(OrderService $orderService, OrderDataTableService $orderDataTableService, OrderItemDataTableService $orderItemDataTableService, OrdersExportService $ordersExportService)
     {
         $this->orderService = $orderService;
         $this->orderDataTableService = $orderDataTableService;
         $this->orderItemDataTableService = $orderItemDataTableService;
+        $this->ordersExportService = $ordersExportService;
     }
 
-    public function index(): View|JsonResponse
+    public function index(): View|JsonResponse|RedirectResponse
     {
         try {
             $assets = ['data-table'];
             $pageTitle = 'Order Data';
-            return $this->orderDataTableService->render('admin.order.index', compact('assets', 'pageTitle'));
+            $headerAction = [
+                '<a href="' . route('admin.order.export') . '" class="btn btn-sm btn-success" role="button">Export Order</a>',
+            ];
+            return $this->orderDataTableService->render('admin.order.index', compact('assets', 'pageTitle', 'headerAction'));
         } catch (Exception $e) {
             $error = $e->getMessage();
             return back()->withErrors($error);
         }
+    }
+
+    public function export()
+    {
+        return $this->ordersExportService->download('orders_' . now() . '.xlsx');
     }
 
     public function show($id): View|JsonResponse

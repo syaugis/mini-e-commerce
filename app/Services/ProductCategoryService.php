@@ -32,7 +32,7 @@ class ProductCategoryService
     public function store($data)
     {
         $validator = Validator::make($data, [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:product_categories,names',
         ]);
 
         if ($validator->fails()) {
@@ -56,7 +56,7 @@ class ProductCategoryService
     public function update($data, $id)
     {
         $validator = Validator::make($data, [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:product_categories,names',
         ]);
 
         if ($validator->fails()) {

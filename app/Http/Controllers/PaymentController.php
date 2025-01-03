@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Services\MidtransService;
+use Exception;
 use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
@@ -14,11 +16,11 @@ class PaymentController extends Controller
         $this->midtransService = $midtransService;
     }
 
-    public function midtransCallback(Request $request)
+    public function midtransCallback()
     {
         try {
             $this->midtransService->handleNotification();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['message' => 'Invalid notification payload: ' . $e->getMessage()], 400);
         }
 
@@ -44,18 +46,24 @@ class PaymentController extends Controller
                     case 'expire':
                     case 'cancel':
                     case 'failed':
+                        foreach ($order->items as $item) {
+                            $product = $item->product;
+                            if ($product) {
+                                $product->increment('stock', $item->quantity);
+                            }
+                        }
                         $order->update(['status' => 4]); // Canceled
                         break;
 
                     default:
-                        \Log::info('Status not recognized', ['order_id' => $order->order_id]);
+                        Log::info('Status not recognized', ['order_id' => $order->order_id]);
                         break;
                 }
                 return response()->json([
                     'success' => true,
                     'message' => 'Notication received',
                 ]);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 return response()->json([
                     'message' => 'API Midtrans Error: ' . $e->getMessage(),
                 ], 500);

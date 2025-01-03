@@ -80,6 +80,13 @@ class OrderService
                 ]);
             }
 
+            foreach ($order->items as $item) {
+                $product = $item->product;
+                if ($product) {
+                    $product->decrement('stock', $item->quantity);
+                }
+            }
+
             $order->shippingAddress()->create([
                 'order_id' => $order->id,
                 'address' => $shippingAddress->address,

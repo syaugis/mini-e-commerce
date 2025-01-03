@@ -23,6 +23,14 @@ class OrderItemSeeder extends Seeder
         ]);
         OrderItem::create([
             'order_id' => 2,
+            'product_id' => 2,
+            'product_name' => 'BARDI Smart LED Bluetooth 9W RGBWW',
+            'product_price' => 112000,
+            'quantity' => 2,
+            'created_at' => now(),
+        ]);
+        OrderItem::create([
+            'order_id' => 2,
             'product_id' => 1,
             'product_name' => 'Polygon Monarch M3 26',
             'product_price' => 2200000,

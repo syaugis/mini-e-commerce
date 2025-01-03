@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\ProductCategory;
 use App\Services\ProductService;
 use App\Services\DataTables\ProductDataTableService;
+use App\Services\Exports\ProductsExportService;
+use App\Services\Exports\ProductsTemplateService;
+use App\Services\Imports\ProductsImportService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -15,24 +18,54 @@ class ProductController extends Controller
 {
     protected $productService;
     protected $productDataTableService;
+    protected $productsExportService;
+    protected $productsTemplateService;
+    protected $productsImportService;
 
-    public function __construct(ProductService $productService, ProductDataTableService $productDataTableService)
+    public function __construct(ProductService $productService, ProductDataTableService $productDataTableService, ProductsExportService $productsExportService, ProductsTemplateService $productsTemplateService, ProductsImportService $productsImportService)
     {
         $this->productService = $productService;
         $this->productDataTableService = $productDataTableService;
+        $this->productsExportService = $productsExportService;
+        $this->productsTemplateService = $productsTemplateService;
+        $this->productsImportService = $productsImportService;
     }
 
-    public function index(): View|JsonResponse
+    public function index(): View|JsonResponse|RedirectResponse
     {
         try {
             $assets = ['data-table'];
             $pageTitle = 'Product Data';
-            $headerAction = '<a href="' . route('admin.product.create') . '" class="btn btn-sm btn-primary" role="button">Add Product</a>';
+            $headerAction = [
+                '<a href="' . route('admin.product.create') . '" class="btn btn-sm btn-primary" role="button">Add Product</a>',
+                '<button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#ImportModalProduct"> Import Product </button>',
+                '<a href="' . route('admin.product.export') . '" class="btn btn-sm btn-success" role="button">Export Product</a>',
+            ];
             return $this->productDataTableService->render('admin.product.index', compact('assets', 'pageTitle', 'headerAction'));
         } catch (Exception $e) {
             $error = $e->getMessage();
             return back()->withErrors($error);
         }
+    }
+
+    public function export()
+    {
+        return $this->productsExportService->download('products_' . now() . '.xlsx');
+    }
+
+    public function template()
+    {
+        return $this->productsTemplateService->download('products_template.xlsx');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xls,xlsx',
+        ]);
+        $this->productsImportService->import($request->file('file'));
+
+        return redirect()->route('admin.product.index')->withSuccess(__('global-message.save_form', ['form' => 'Product data']));
     }
 
     public function create(): View

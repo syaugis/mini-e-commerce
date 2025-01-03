@@ -5508,7 +5508,7 @@ textarea.form-control-lg {
   opacity: 0;
 }
 .modal-backdrop.show {
-  opacity: 0;
+  opacity: 0.5;
 }
 
 .modal-header {

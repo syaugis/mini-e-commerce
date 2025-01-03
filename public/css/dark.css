@@ -849,6 +849,20 @@ hr {
 .dark .alert-bottom.alert-gray-dark {
   border-color: #343a40;
 }
+.dark .modal-content {
+  background-color: #222738;
+  color: #dee2e6;
+}
+.dark .modal-content .modal-header, .dark .modal-content .modal-body , .dark .modal-content .modal-footer{
+  border-top: 1px solid #222738;
+  border-bottom: 1px solid #222738;
+}
+.dark .modal-content .modal-body .form-control {
+  background-color: #222738;
+}
+.dark .modal-content .modal-body .form-group label {
+  color: #8A92A6;
+}
 .dark .card {
   background: #222738;
 }
@@ -888,6 +902,12 @@ hr {
   color: #8A92A6;
   background-color: #222738;
   border-color: #30384f;
+}
+.dark .form-control[type="file"]::-webkit-file-upload-button,
+.dark .form-control[type="file"]::file-selector-button {
+    color: #8A92A6;
+    background-color: #181818;
+    border-color: #30384f;
 }
 .dark .form-control.is-invalid {
   border-color: #c03221;

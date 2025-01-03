@@ -17,7 +17,12 @@ class OrderRepository
     {
         return $this->order->with('shippingAddress', 'items')
             ->where('user_id', '=', $id)
-            ->get();
+            ->all();
+    }
+
+    public function getQueryAll()
+    {
+        return $this->order->query();
     }
 
     public function getById($id): ?Order

@@ -14,8 +14,17 @@ class Payment extends Model
         'paid_at',
     ];
 
+    protected $appends = [
+        'snap_url',
+    ];
+
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class, 'order_id');
+    }
+
+    public function getSnapUrlAttribute(): String
+    {
+        return 'https://app.sandbox.midtrans.com/snap/v2/vtweb/' . $this->snap_token;
     }
 }

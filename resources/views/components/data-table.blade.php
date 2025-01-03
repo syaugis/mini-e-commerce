@@ -5,8 +5,10 @@
                 <div class="header-title">
                     <h4 class="card-title">{{ $pageTitle }}</h4>
                 </div>
-                <div class="card-action">
-                    {!! $headerAction !!}
+                <div class="card-action d-flex gap-2 flex-column flex-sm-row">
+                    @foreach ($headerAction as $action)
+                        {!! $action !!}
+                    @endforeach
                 </div>
             </div>
             <div class="card-body px-0">

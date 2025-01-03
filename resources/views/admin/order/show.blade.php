@@ -31,6 +31,13 @@
                         :selected="$data->status ?? ''" required="true" />
                     <x-form-input name="total_price" id="order_total_price" label="Order Total Price" :value="$data->formatted_total_price ?? ''"
                         :readonly="true" />
+                    @php
+                        $newestPayment = $data->payments->last();
+                    @endphp
+                    <x-form-input name="payment_status" id="order_payment_status" label="Order Midtrans Status"
+                        :value="$newestPayment->status ?? ''" :readonly="true" />
+                    <x-form-input name="payment_snap_url" id="order_payment_snap_url" label="Order Midtrans Snap URL"
+                        :value="$newestPayment->snap_url ?? ''" :readonly="true" />
                     <x-form-input name="shipping_address" id="order_shipping_address" label="Order Shipping Address"
                         :value="$data->shippingAddress->address ?? ''" :readonly="true" />
                     <x-form-input name="shipping_city" id="order_shipping_city" label="Order Shipping City"

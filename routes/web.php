@@ -32,6 +32,9 @@ Route::middleware('auth', 'role:ADMIN')->prefix('admin')->group(function () {
 
     Route::controller(ProductController::class)->prefix('product')->group(function () {
         Route::get('', 'index')->name('admin.product.index');
+        Route::get('export', 'export')->name('admin.product.export');
+        Route::get('download-template', 'template')->name('admin.product.template');
+        Route::post('import', 'import')->name('admin.product.import');
         Route::get('add', 'create')->name('admin.product.create');
         Route::post('add', 'store')->name('admin.product.store');
         Route::get('edit/{id}', 'edit')->name('admin.product.edit');
@@ -41,6 +44,9 @@ Route::middleware('auth', 'role:ADMIN')->prefix('admin')->group(function () {
 
     Route::controller(ProductCategoryController::class)->prefix('category')->group(function () {
         Route::get('', 'index')->name('admin.category.index');
+        Route::get('export', 'export')->name('admin.category.export');
+        Route::get('download-template', 'template')->name('admin.category.template');
+        Route::post('import', 'import')->name('admin.category.import');
         Route::get('add', 'create')->name('admin.category.create');
         Route::post('add', 'store')->name('admin.category.store');
         Route::get('edit/{id}', 'edit')->name('admin.category.edit');
@@ -50,12 +56,14 @@ Route::middleware('auth', 'role:ADMIN')->prefix('admin')->group(function () {
 
     Route::controller(OrderController::class)->prefix('order')->group(function () {
         Route::get('', 'index')->name('admin.order.index');
+        Route::get('export', 'export')->name('admin.order.export');
         Route::get('show/{id}', 'show')->name('admin.order.show');
         Route::put('edit/{id}', 'update')->name('admin.order.update');
     });
 
     Route::controller(UserController::class)->prefix('user')->group(function () {
         Route::get('', 'index')->name('admin.user.index');
+        Route::get('export', 'export')->name('admin.user.export');
         Route::get('show/{id}', 'show')->name('admin.user.show');
         Route::get('{id}/orders', 'getOrders')->name('admin.user.orders');
         Route::get('{id}/shipping-address', 'getShippingAddresses')->name('admin.user.shipping-addresses');

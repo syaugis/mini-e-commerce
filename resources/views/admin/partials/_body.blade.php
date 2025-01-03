@@ -27,19 +27,3 @@
 @include('admin.components.setting-offcanvas')
 @include('admin.partials._scripts')
 @include('admin.partials._app_toast')
-<div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-labelledby="formModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="formTitle">Form</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="formBody">
-                <div class="main_form">
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>

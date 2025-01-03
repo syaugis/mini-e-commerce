@@ -4,7 +4,7 @@ namespace App\View\Components;
 
 use Illuminate\View\Component;
 
-class Image extends Component
+class File extends Component
 {
     public $name;
     public $id;
@@ -23,26 +23,24 @@ class Image extends Component
      * @param string $id
      * @param string $label
      * @param string|null $value
-     * @param string|null $accept
-     * @param string $placeholder
+     * @param string|null $accept 
      * @param bool $required
      * @param bool $multiple
      */
 
-    public function __construct($name, $id, $label, $value = '',  $accept = '', $placeholder = '', $required = false, $multiple = false)
+    public function __construct($name, $id, $label, $value = '',  $accept = '', $required = false, $multiple = false)
     {
         $this->name = $name;
         $this->id = $id;
         $this->label = $label;
         $this->value = $value;
         $this->accept = $accept;
-        $this->placeholder = $placeholder;
         $this->required = $required;
         $this->multiple = $multiple;
     }
 
     public function render()
     {
-        return view('components.image');
+        return view('components.file');
     }
 }

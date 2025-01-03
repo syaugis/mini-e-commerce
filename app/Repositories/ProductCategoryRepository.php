@@ -15,7 +15,12 @@ class ProductCategoryRepository
 
     public function getAll()
     {
-        return $this->productCategory->get();
+        return $this->productCategory->all();
+    }
+
+    public function getQueryAll()
+    {
+        return $this->productCategory->query();
     }
 
     public function getById($id): ?ProductCategory

@@ -17,7 +17,12 @@ class UserRepository
 
     public function getAll(): Collection
     {
-        return $this->user->with('shippingAddresses', 'cart', 'orders')->get();
+        return $this->user->with('shippingAddresses', 'cart', 'orders')->all();
+    }
+
+    public function getQueryAll()
+    {
+        return $this->user->query();
     }
 
     public function getById($id): User
