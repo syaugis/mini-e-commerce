@@ -3,6 +3,9 @@
 namespace App\Services\Imports;
 
 use App\Models\Product;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
@@ -10,27 +13,54 @@ use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
 
-class ProductsImportService implements ToModel, WithValidation, WithHeadingRow
+class ProductsImportService implements ToModel, WithBatchInserts, WithChunkReading, WithValidation, WithHeadingRow
 {
     use Importable;
 
-    /**s
+    /**
      * @param array $row
      *
      * @return \Illuminate\Database\Eloquent\Model|null
      */
-    public function model(array $row)
+    public function model(array $row): null
     {
-        $product = new Product([
+        $data = [
             'name' => $row['name'],
             'description' => $row['description'],
             'price' => $row['price'],
             'stock' => $row['stock'],
             'category_id' => $row['category_id'],
-        ]);
-        $product->save();
-        $product->productImages()->create(['image_path' => 'img_product/default.jpg']);
-        return $product;
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+
+        Product::insert($data);
+
+        $product = Product::latest()->first();
+        $imagePaths = explode(';', $row['image_paths']);
+        foreach ($imagePaths as $url) {
+            $this->downloadAndStoreImage($url, $product);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $url
+     * @param Product $product
+     */
+    private function downloadAndStoreImage(string $url, Product $product)
+    {
+        try {
+            $imageContent = Http::get($url)->body();
+            $fileName = 'img_product/' . uniqid() . '.' . pathinfo($url, PATHINFO_EXTENSION);
+
+            Storage::disk('public')->put($fileName, $imageContent);
+
+            $product->productImages()->create(['image_path' => $fileName]);
+        } catch (\Exception $e) {
+            Log::error('Failed to download image: ' . $url . ' - Error: ' . $e->getMessage());
+        }
     }
 
     /**

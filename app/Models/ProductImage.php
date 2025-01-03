@@ -21,6 +21,11 @@ class ProductImage extends Model
         return $this->belongsTo(Product::class);
     }
 
+    public function getFirstImageUrlAttribute(): string
+    {
+        return url('storage/' . $this->image_path);
+    }
+
     public function getImageUrlAttribute()
     {
         return $this->image_path

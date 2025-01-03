@@ -26,7 +26,7 @@ class ProductDataTableService extends DataTable
             })
             ->addColumn('image', function ($query) {
                 if ($query->productImages->isNotEmpty()) {
-                    $url = asset("storage/" . $query->productImages->first()->image_path);
+                    $url = $query->productImages->first()->first_image_url;
                 } else {
                     $url = asset('images/error/no_image.png');
                 }

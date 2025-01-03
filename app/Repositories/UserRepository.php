@@ -17,12 +17,12 @@ class UserRepository
 
     public function getAll(): Collection
     {
-        return $this->user->with('shippingAddresses', 'cart', 'orders')->all();
+        return $this->user->with('shippingAddresses', 'defaultAddress', 'cart', 'orders')->all();
     }
 
     public function getQueryAll()
     {
-        return $this->user->query();
+        return $this->user->query()->with('defaultAddress');
     }
 
     public function getById($id): User

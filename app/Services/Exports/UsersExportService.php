@@ -45,6 +45,8 @@ class UsersExportService implements FromQuery, WithCustomChunkSize, WithHeadings
             'ID',
             'Name',
             'Email',
+            'Phone',
+            'Shipping Address',
             'Created At',
             'Updated At',
         ];
@@ -60,6 +62,10 @@ class UsersExportService implements FromQuery, WithCustomChunkSize, WithHeadings
             $user->id,
             $user->name,
             $user->email,
+            $user->shippingAddresses->map(function ($shippingAddress) {
+                return $shippingAddress->phone;
+            })->implode(', '),
+            $user->defaultAddress?->address . ', ' . $user->defaultAddress?->city . ', ' . $user->defaultAddress?->postcode,
             $user->created_at,
             $user->updated_at,
         ];

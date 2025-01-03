@@ -29,6 +29,7 @@ class ProductsTemplateService implements FromArray, WithHeadings
             'price',
             'stock',
             'category_id',
+            'image_paths'
         ];
     }
 }

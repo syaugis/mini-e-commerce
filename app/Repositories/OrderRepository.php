@@ -22,7 +22,7 @@ class OrderRepository
 
     public function getQueryAll()
     {
-        return $this->order->query();
+        return $this->order->query()->with('shippingAddress', 'items');
     }
 
     public function getById($id): ?Order

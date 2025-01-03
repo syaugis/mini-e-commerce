@@ -18,7 +18,6 @@ class ShippingAddressRepository
         return $this->shippingAddress->where('id', $id)->exists();
     }
 
-
     public function getById($id): ?ShippingAddress
     {
         return $this->shippingAddress->findOrFail($id);

@@ -21,7 +21,7 @@ class ProductRepository
 
     public function getQueryAll()
     {
-        return $this->product->query();
+        return $this->product->query()->with('productCategory');
     }
 
     public function getById($id): ?Product
