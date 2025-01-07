@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ShippingAddressController;
@@ -23,6 +24,12 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'role:USER'])->group(function () {
+    Route::controller(NotificationController::class)->prefix('notification')->group(function () {
+        Route::get('',  'index');
+        Route::post('{id}/read',  'markAsRead');
+        Route::delete('{id}',  'destroy');
+    });
+
     Route::controller(ShippingAddressController::class)->prefix('shipping-addresses')->group(function () {
         //    index
         Route::get('', 'index'); //show

@@ -3,8 +3,11 @@
 namespace App\Services\Imports;
 
 use App\Models\Product;
+use App\Models\User;
+use App\Notifications\NewProductNotification;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\Importable;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -41,6 +44,9 @@ class ProductsImportService implements ToModel, WithBatchInserts, WithChunkReadi
         foreach ($imagePaths as $url) {
             $this->downloadAndStoreImage($url, $product);
         }
+
+        $users = User::where('role', 1)->get();
+        Notification::send($users, new NewProductNotification($product));
 
         return null;
     }

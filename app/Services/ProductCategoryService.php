@@ -32,7 +32,7 @@ class ProductCategoryService
     public function store($data)
     {
         $validator = Validator::make($data, [
-            'name' => 'required|string|max:255|unique:product_categories,names',
+            'name' => 'required|string|max:255|unique:product_categories,name',
         ]);
 
         if ($validator->fails()) {
@@ -41,7 +41,7 @@ class ProductCategoryService
 
         DB::beginTransaction();
         try {
-            $product = $this->productCategoryRepository->store($data);
+            $productCategory = $this->productCategoryRepository->store($data);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
@@ -50,13 +50,13 @@ class ProductCategoryService
         }
         DB::commit();
 
-        return $product;
+        return $productCategory;
     }
 
     public function update($data, $id)
     {
         $validator = Validator::make($data, [
-            'name' => 'required|string|max:255|unique:product_categories,names',
+            'name' => 'required|string|max:255|unique:product_categories,name,' . $id,
         ]);
 
         if ($validator->fails()) {
@@ -65,7 +65,7 @@ class ProductCategoryService
 
         DB::beginTransaction();
         try {
-            $product = $this->productCategoryRepository->update($data, $id);
+            $productCategory = $this->productCategoryRepository->update($data, $id);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
@@ -74,14 +74,14 @@ class ProductCategoryService
         }
         DB::commit();
 
-        return $product;
+        return $productCategory;
     }
 
     public function destroy($id)
     {
         DB::beginTransaction();
         try {
-            $product = $this->productCategoryRepository->destroy($id);
+            $productCategory = $this->productCategoryRepository->destroy($id);
         } catch (Exception $e) {
             DB::rollBack();
             Log::info($e->getMessage());
@@ -90,6 +90,6 @@ class ProductCategoryService
         }
         DB::commit();
 
-        return $product;
+        return $productCategory;
     }
 }

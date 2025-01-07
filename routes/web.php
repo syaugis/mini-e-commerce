@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
@@ -30,6 +31,13 @@ All Admin Routes List
 Route::middleware('auth', 'role:ADMIN')->prefix('admin')->group(function () {
     Route::get('dashboard', [HomeController::class, 'index'])->name('admin.dashboard');
 
+    Route::controller(NotificationController::class)->prefix('notification')->group(function () {
+        Route::get('marks-read-all', 'marksAllRead')->name('admin.notification.marks-all-read');
+        Route::delete('clear-all', 'clearAll')->name('admin.notification.clear-all');
+        Route::get('{id}', 'show')->name('admin.notification.show');
+        Route::delete('{id}', 'destroy')->name('admin.notification.destroy');
+    });
+
     Route::controller(ProductController::class)->prefix('product')->group(function () {
         Route::get('', 'index')->name('admin.product.index');
         Route::get('export', 'export')->name('admin.product.export');
@@ -37,8 +45,8 @@ Route::middleware('auth', 'role:ADMIN')->prefix('admin')->group(function () {
         Route::post('import', 'import')->name('admin.product.import');
         Route::get('add', 'create')->name('admin.product.create');
         Route::post('add', 'store')->name('admin.product.store');
-        Route::get('edit/{id}', 'edit')->name('admin.product.edit');
-        Route::put('edit/{id}', 'update')->name('admin.product.update');
+        Route::get('{id}/edit', 'edit')->name('admin.product.edit');
+        Route::put('{id}', 'update')->name('admin.product.update');
         Route::delete('destroy/{id}', 'destroy')->name('admin.product.destroy');
     });
 
@@ -49,22 +57,22 @@ Route::middleware('auth', 'role:ADMIN')->prefix('admin')->group(function () {
         Route::post('import', 'import')->name('admin.category.import');
         Route::get('add', 'create')->name('admin.category.create');
         Route::post('add', 'store')->name('admin.category.store');
-        Route::get('edit/{id}', 'edit')->name('admin.category.edit');
-        Route::put('edit/{id}', 'update')->name('admin.category.update');
+        Route::get('{id}/edit', 'edit')->name('admin.category.edit');
+        Route::put('{id}', 'update')->name('admin.category.update');
         Route::delete('destroy/{id}', 'destroy')->name('admin.category.destroy');
     });
 
     Route::controller(OrderController::class)->prefix('order')->group(function () {
         Route::get('', 'index')->name('admin.order.index');
         Route::get('export', 'export')->name('admin.order.export');
-        Route::get('show/{id}', 'show')->name('admin.order.show');
-        Route::put('edit/{id}', 'update')->name('admin.order.update');
+        Route::get('{id}', 'show')->name('admin.order.show');
+        Route::put('{id}', 'update')->name('admin.order.update');
     });
 
     Route::controller(UserController::class)->prefix('user')->group(function () {
         Route::get('', 'index')->name('admin.user.index');
         Route::get('export', 'export')->name('admin.user.export');
-        Route::get('show/{id}', 'show')->name('admin.user.show');
+        Route::get('{id}', 'show')->name('admin.user.show');
         Route::get('{id}/orders', 'getOrders')->name('admin.user.orders');
         Route::get('{id}/shipping-address', 'getShippingAddresses')->name('admin.user.shipping-addresses');
     });

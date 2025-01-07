@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'notifications' => 'All notifications :notification',
     'list_form_title' => ':form List',
     'add_form_title' => 'Add :form',
     'update_form_title' => 'Update :form',

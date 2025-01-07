@@ -1059,6 +1059,10 @@ hr {
 .dark .bg-light {
   background: #60658a !important;
 }
+.dark .bg-notification-light {
+  color: #60658a !important;
+  background: rgba(255, 255, 255, 1) !important;
+}
 .dark .popover {
   background-color: #151824;
 }

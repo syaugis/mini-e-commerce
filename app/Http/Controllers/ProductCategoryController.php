@@ -49,7 +49,7 @@ class ProductCategoryController extends Controller
 
     public function export()
     {
-        return $this->productCategoriesExportService->download('product_categories' . now() . '.xlsx');
+        return $this->productCategoriesExportService->download('product_categories_' . now() . '.xlsx');
     }
 
     public function template()

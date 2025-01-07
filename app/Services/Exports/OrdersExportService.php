@@ -72,7 +72,7 @@ class OrdersExportService implements FromQuery, WithCustomChunkSize, WithHeading
             $order->payments->last()->status,
             $order->payments->last()->snap_url,
             $order->items->map(function ($item) {
-                return $item->product->name . ' (' . $item->quantity . ' items)';
+                return $item->product_name . ' (' . $item->quantity . ' items)';
             })->implode(', '),
             $order->created_at,
             $order->updated_at,
